@@ -1,4 +1,4 @@
-# Simple CLI Calculator
+# Simple CLI Calculator -> Calculator Web App
 (Originally completed earlier, now published here for reference.)
 simple terminal calculator 
  - live demo: https://austin-n-do.github.io/CLI-Calculator/
