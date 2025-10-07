@@ -1,12 +1,11 @@
-#include <iostream>
-#include <sstream>
+#include <napi.h>
 #include <vector>
 #include <string>
-#include <cmath> // for pow()
+#include <cmath>
 
 using namespace std;
 
-// Helper: split input into tokens (numbers and operators)
+// Tokenize input string
 vector<string> tokenize(const string& expr) {
     vector<string> tokens;
     string token;
@@ -26,9 +25,9 @@ vector<string> tokenize(const string& expr) {
     return tokens;
 }
 
-// Evaluate expression with precedence (^, then *, /, then +, -)
+// Evaluate tokens
 double evaluate(vector<string> tokens) {
-    // Pass 1: handle ^
+    // ^ first
     for (size_t i = 0; i < tokens.size(); ) {
         if (tokens[i] == "^") {
             double left = stod(tokens[i - 1]);
@@ -41,7 +40,7 @@ double evaluate(vector<string> tokens) {
         }
     }
 
-    // Pass 2: handle * and /
+    // * and /
     for (size_t i = 0; i < tokens.size(); ) {
         if (tokens[i] == "*" || tokens[i] == "/") {
             double left = stod(tokens[i - 1]);
@@ -54,7 +53,7 @@ double evaluate(vector<string> tokens) {
         }
     }
 
-    // Pass 3: handle + and -
+    // + and -
     double result = stod(tokens[0]);
     for (size_t i = 1; i < tokens.size(); i += 2) {
         string op = tokens[i];
@@ -66,24 +65,19 @@ double evaluate(vector<string> tokens) {
     return result;
 }
 
-int main() {
-    cout << "CLI Calculator (supports +, -, *, /, ^)\nType 'quit' to exit.\n";
-    string line;
-
-    while (true) {
-        cout << "Calculate: ";
-        getline(cin, line);
-        if (line == "quit") break;
-        if (line.empty()) continue;
-
-        try {
-            vector<string> tokens = tokenize(line);
-            double result = evaluate(tokens);
-            cout << "= " << result << "\n";
-        } catch (...) {
-            cout << "Error: invalid expression\n";
-        }
-    }
-
-    return 0;
+// N-API wrapper
+Napi::Number EvaluateWrapped(const Napi::CallbackInfo& info) {
+    Napi::Env env = info.Env();
+    string expr = info[0].As<Napi::String>();
+    vector<string> tokens = tokenize(expr);
+    double result = evaluate(tokens);
+    return Napi::Number::New(env, result);
 }
+
+// Module initialization
+Napi::Object Init(Napi::Env env, Napi::Object exports) {
+    exports.Set("evaluate", Napi::Function::New(env, EvaluateWrapped));
+    return exports;
+}
+
+NODE_API_MODULE(calculator, Init)
