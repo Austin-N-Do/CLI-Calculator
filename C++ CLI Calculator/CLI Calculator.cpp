@@ -2,6 +2,7 @@
 #include <sstream>
 #include <vector>
 #include <string>
+#include <cmath> // for pow()
 
 using namespace std;
 
@@ -25,30 +26,39 @@ vector<string> tokenize(const string& expr) {
     return tokens;
 }
 
-// Evaluate expression with simple precedence (*,/ before +,-)
-double evaluate(const vector<string>& tokens) {
-    vector<string> temp = tokens;
-
-    // First pass: handle * and /
-    for (size_t i = 0; i < temp.size(); ) {
-        if (temp[i] == "*" || temp[i] == "/") {
-            double left = stod(temp[i-1]);
-            double right = stod(temp[i+1]);
-            double result = (temp[i] == "*") ? left * right : left / right;
-
-            // Replace three tokens with result
-            temp[i-1] = to_string(result);
-            temp.erase(temp.begin() + i, temp.begin() + i + 2);
+// Evaluate expression with precedence (^, then *, /, then +, -)
+double evaluate(vector<string> tokens) {
+    // Pass 1: handle ^
+    for (size_t i = 0; i < tokens.size(); ) {
+        if (tokens[i] == "^") {
+            double left = stod(tokens[i - 1]);
+            double right = stod(tokens[i + 1]);
+            double result = pow(left, right);
+            tokens[i - 1] = to_string(result);
+            tokens.erase(tokens.begin() + i, tokens.begin() + i + 2);
         } else {
             ++i;
         }
     }
 
-    // Second pass: handle + and -
-    double result = stod(temp[0]);
-    for (size_t i = 1; i < temp.size(); i += 2) {
-        string op = temp[i];
-        double val = stod(temp[i+1]);
+    // Pass 2: handle * and /
+    for (size_t i = 0; i < tokens.size(); ) {
+        if (tokens[i] == "*" || tokens[i] == "/") {
+            double left = stod(tokens[i - 1]);
+            double right = stod(tokens[i + 1]);
+            double result = (tokens[i] == "*") ? left * right : left / right;
+            tokens[i - 1] = to_string(result);
+            tokens.erase(tokens.begin() + i, tokens.begin() + i + 2);
+        } else {
+            ++i;
+        }
+    }
+
+    // Pass 3: handle + and -
+    double result = stod(tokens[0]);
+    for (size_t i = 1; i < tokens.size(); i += 2) {
+        string op = tokens[i];
+        double val = stod(tokens[i + 1]);
         if (op == "+") result += val;
         else if (op == "-") result -= val;
     }
@@ -57,7 +67,7 @@ double evaluate(const vector<string>& tokens) {
 }
 
 int main() {
-    cout << "CLI Calculator (type 'quit' to exit)\n";
+    cout << "CLI Calculator (supports +, -, *, /, ^)\nType 'quit' to exit.\n";
     string line;
 
     while (true) {
