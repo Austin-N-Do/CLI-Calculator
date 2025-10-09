@@ -1,0 +1,24 @@
+# Node dependencies
+node_modules/
+
+# Build output
+build/
+dist/
+output/
+*.exe
+*.obj
+*.pdb
+*.log
+
+# OS/Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Build files
+build/
+C++ CLI Calculator/output/
+*.exe
+*.tlog
+*.sln
+*.vcxproj

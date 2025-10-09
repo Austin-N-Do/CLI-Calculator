@@ -1,22 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Web Calculator</title>
+  <title>CLI Calculator</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Web Calculator</h1>
-
-  <!-- Expression input -->
-  <input id="expr" placeholder="Enter expression">
-
-  <!-- Button to calculate -->
-  <button onclick="calculate()">=</button>
-
-  <!-- Result display -->
-  <p id="result"></p>
-
-  <!-- Link to our JS code -->
+  <h1>Calculator</h1>
+  <form id="calc-form">
+    <input type="text" id="expression" placeholder="3 + 5 * 2" />
+    <button type="submit">Evaluate</button>
+  </form>
+  <p>Result: <span id="result"></span></p>
   <script src="script.js"></script>
 </body>
 </html>

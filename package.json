@@ -1,0 +1,23 @@
+{
+  "name": "cli-calculator-web",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build-addon": "node-gyp rebuild",
+    "watch-addon": "nodemon --watch ./ -e cpp,h --exec \"npm run build-addon\"",
+    "start": "node server.js",
+    "watch-server": "nodemon server.js",
+    "dev": "concurrently \"npm run watch-addon\" \"npm run watch-server\"",
+    "dev-full": "concurrently \"npm run watch-addon\" \"npm run watch-server\" \"npm run serve\"",
+    "serve": "live-server docs --port=8080 --open=./index.html"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0",
+    "live-server": "^1.2.2",
+    "nodemon": "^3.1.10"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "node-addon-api": "^5.1.0"
+  }
+}
